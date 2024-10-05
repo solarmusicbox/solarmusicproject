@@ -19,6 +19,22 @@
             padding: 10px;
             font-size: 16px;
         }
+        .social-buttons {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+        }
+        .social-buttons a {
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        .social-buttons img {
+            width: 40px;
+            height: 40px;
+        }
     </style>
 </head>
 <body>
@@ -30,6 +46,22 @@
         <button id="normal">Нормально (x1)</button>
         <button id="fast">Быстро (x10)</button>
         <button id="superfast">Очень быстро (x100)</button>
+    </div>
+
+    <!-- Контролы для соцсетей -->
+    <div class="social-buttons">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://your-site.com" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" alt="Facebook">
+        </a>
+        <a href="https://twitter.com/intent/tweet?url=https://your-site.com&text=Check%20this%20out!" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/124/124021.png" alt="Twitter">
+        </a>
+        <a href="https://vk.com/share.php?url=https://your-site.com" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/145/145813.png" alt="VK">
+        </a>
+        <a href="https://t.me/share/url?url=https://your-site.com&text=Check%20this%20out!" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram">
+        </a>
     </div>
 
 <script>

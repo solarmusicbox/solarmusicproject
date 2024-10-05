@@ -3,23 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Солне<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Солнечная система с кнопками скорости и спутниками</title>
+    <title>3D Солнечная музыкальная шкатулка с кнопками скорости</title>
     <style>
         body { margin: 0; overflow: hidden; display: flex; flex-direction: column; }
         canvas { flex-grow: 1; display: block; }
         .controls {
             position: absolute;
-            bottom: 60px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 10px;
-            z-index: 10;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
         }
         .social-buttons {
             position: absolute;
@@ -28,171 +26,6 @@
             transform: translateX(-50%);
             display: flex;
             justify-content: center;
-            z-index: 9;
-        }
-        button {
-            padding: 10px;
-            font-size: 16px;
-        }
-        .social-buttons a {
-            margin: 0 10px;
-            text-decoration: none;
-        }
-        .social-buttons img {
-            width: 40px;
-            height: 40px;
-        }
-    </style>
-</head>
-<body>
-    <script src="three.min.js"></script>
-
-    <!-- Контролы для выбора скорости -->
-    <div class="controls">
-        <button id="slow">Медленно (x0.1)</button>
-        <button id="normal">Нормально (x1)</button>
-        <button id="fast">Быстро (x10)</button>
-        <button id="superfast">Очень быстро (x100)</button>
-    </div>
-
-    <!-- Контролы для соцсетей -->
-    <div class="social-buttons">
-        <a href="https://www.facebook.com/sharer/sharer.php?u=https://your-site.com" target="_blank">
-            <img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" alt="Facebook">
-        </a>
-        <a href="https://twitter.com/intent/tweet?url=https://your-site.com&text=Check%20this%20out!" target="_blank">
-            <img src="https://cdn-icons-png.flaticon.com/512/124/124021.png" alt="Twitter">
-        </a>
-        <a href="https://vk.com/share.php?url=https://your-site.com" target="_blank">
-            <img src="https://cdn-icons-png.flaticon.com/512/145/145813.png" alt="VK">
-        </a>
-        <a href="https://t.me/share/url?url=https://your-site.com&text=Check%20this%20out!" target="_blank">
-            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram">
-        </a>
-    </div>
-
-<script>
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    const light = new THREE.PointLight(0xFFFFFF, 1, 100);
-    light.position.set(0, 0, 50);
-    scene.add(light);
-
-    const sunGeometry = new THREE.SphereGeometry(2.5, 32, 32);
-    const sunMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFF00 });
-    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-    scene.add(sun);
-
-    const planets = [];
-    const moons = [];
-    const planetData = [
-        { name: 'Меркурий', size: 0.5, distance: 5, speed: 0.04, color: 0x888888, moons: [] },
-        { name: 'Венера', size: 1.0, distance: 7, speed: 0.03, color: 0xAAAA55, moons: [] },
-        { name: 'Земля', size: 1.2, distance: 10, speed: 0.02, color: 0x0000FF, moons: [{ name: 'Луна', size: 0.3, distance: 1.5, speed: 0.05 }] },
-        { name: 'Марс', size: 0.8, distance: 12, speed: 0.018, color: 0xFF0000, moons: [{ name: 'Фобос', size: 0.2, distance: 1.0, speed: 0.06 }, { name: 'Деймос', size: 0.15, distance: 1.3, speed: 0.04 }] },
-        { name: 'Юпитер', size: 1.8, distance: 16, speed: 0.01, color: 0xDD9933, moons: [{ name: 'Ио', size: 0.4, distance: 2, speed: 0.07 }, { name: 'Европа', size: 0.35, distance: 2.5, speed: 0.05 }] },
-        { name: 'Сатурн', size: 1.6, distance: 20, speed: 0.008, color: 0xDDCC99, moons: [{ name: 'Титан', size: 0.45, distance: 2, speed: 0.06 }, { name: 'Энцелад', size: 0.3, distance: 2.8, speed: 0.04 }] },
-        { name: 'Уран', size: 1.4, distance: 24, speed: 0.006, color: 0x77FFAA, moons: [] },
-        { name: 'Нептун', size: 1.3, distance: 28, speed: 0.005, color: 0x3377FF, moons: [] }
-    ];
-
-    planetData.forEach(planet => {
-        const planetGeometry = new THREE.SphereGeometry(planet.size, 32, 32);
-        const planetMaterial = new THREE.MeshLambertMaterial({ color: planet.color });
-        const planetMesh = new THREE.Mesh(planetGeometry, planetMaterial);
-        scene.add(planetMesh);
-        planets.push({ mesh: planetMesh, distance: planet.distance, speed: planet.speed, angle: Math.random() * Math.PI * 2 });
-
-        planet.moons.forEach(moon => {
-            const moonGeometry = new THREE.SphereGeometry(moon.size, 32, 32);
-            const moonMaterial = new THREE.MeshLambertMaterial({ color: 0xAAAAAA });
-            const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
-            scene.add(moonMesh);
-            moons.push({ mesh: moonMesh, planet: planetMesh, distance: moon.distance, speed: moon.speed, angle: Math.random() * Math.PI * 2 });
-        });
-    });
-
-    camera.position.z = 30;
-
-    let speedMultiplier = 1;
-
-    function animate() {
-        requestAnimationFrame(animate);
-
-        planets.forEach(planet => {
-            planet.angle += planet.speed * speedMultiplier * 0.001;
-            const x = Math.cos(planet.angle) * planet.distance;
-            const y = Math.sin(planet.angle) * planet.distance;
-            planet.mesh.position.set(x + sun.position.x, y + sun.position.y, sun.position.z);
-        });
-
-        moons.forEach(moon => {
-            moon.angle += moon.speed * speedMultiplier * 0.001;
-            const x = Math.cos(moon.angle) * moon.distance;
-            const y = Math.sin(moon.angle) * moon.distance;
-            moon.mesh.position.set(
-                moon.planet.position.x + x,
-                moon.planet.position.y + y,
-                moon.planet.position.z
-            );
-        });
-
-        renderer.render(scene, camera);
-    }
-
-    animate();
-
-    window.addEventListener('resize', () => {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        renderer.setSize(width, height);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-    });
-
-    document.getElementById('slow').addEventListener('click', () => {
-        speedMultiplier = 0.1;
-    });
-    document.getElementById('normal').addEventListener('click', () => {
-        speedMultiplier = 1;
-    });
-    document.getElementById('fast').addEventListener('click', () => {
-        speedMultiplier = 10;
-    });
-    document.getElementById('superfast').addEventListener('click', () => {
-        speedMultiplier = 100;
-    });
-</script>
-</body>
-</html>солнечная система с подписями и спутниками</title>
-    <style>
-        body { margin: 0; overflow: hidden; display: flex; flex-direction: column; }
-        canvas { flex-grow: 1; display: block; }
-        .controls {
-            position: absolute;
-            bottom: 60px; /* Чтобы кнопки соцсетей не перекрывались */
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 10;
-        }
-        .social-buttons {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            justify-content: center;
-            z-index: 9;
-        }
-        button {
-            padding: 10px;
-            font-size: 16px;
         }
         .social-buttons a {
             margin: 0 10px;
@@ -239,62 +72,32 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Функция для создания текстуры с подписью
-    function createTextTexture(text) {
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.width = 256;
-        canvas.height = 128;
-        context.fillStyle = 'black';
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        context.fillStyle = 'white';
-        context.font = '30px Arial';
-        context.textAlign = 'center';
-        context.fillText(text, canvas.width / 2, canvas.height / 2);
-        return new THREE.CanvasTexture(canvas);
-    }
-
-    // Добавляем освещение
-    const light = new THREE.PointLight(0xFFFFFF, 1, 100);
-    light.position.set(0, 0, 50);
-    scene.add(light);
-
     // Солнце
     const sunGeometry = new THREE.SphereGeometry(2.5, 32, 32);
-    const sunMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFF00 });
+    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
     const sun = new THREE.Mesh(sunGeometry, sunMaterial);
     scene.add(sun);
 
-    // Данные о планетах и спутниках
+    // Данные о планетах
     const planets = [];
-    const moons = [];
     const planetData = [
-        { name: 'Меркурий', size: 0.5, distance: 5, speed: 0.04, color: 0x888888, moons: [] },
-        { name: 'Венера', size: 1.0, distance: 7, speed: 0.03, color: 0xAAAA55, moons: [] },
-        { name: 'Земля', size: 1.2, distance: 10, speed: 0.02, color: 0x0000FF, moons: [{ name: 'Луна', size: 0.3, distance: 1.5, speed: 0.05 }] },
-        { name: 'Марс', size: 0.8, distance: 12, speed: 0.018, color: 0xFF0000, moons: [{ name: 'Фобос', size: 0.2, distance: 1.0, speed: 0.06 }, { name: 'Деймос', size: 0.15, distance: 1.3, speed: 0.04 }] },
-        { name: 'Юпитер', size: 1.8, distance: 16, speed: 0.01, color: 0xDD9933, moons: [{ name: 'Ио', size: 0.4, distance: 2, speed: 0.07 }, { name: 'Европа', size: 0.35, distance: 2.5, speed: 0.05 }] },
-        { name: 'Сатурн', size: 1.6, distance: 20, speed: 0.008, color: 0xDDCC99, moons: [{ name: 'Титан', size: 0.45, distance: 2, speed: 0.06 }, { name: 'Энцелад', size: 0.3, distance: 2.8, speed: 0.04 }] },
-        { name: 'Уран', size: 1.4, distance: 24, speed: 0.006, color: 0x77FFAA, moons: [] },
-        { name: 'Нептун', size: 1.3, distance: 28, speed: 0.005, color: 0x3377FF, moons: [] }
+        { name: 'Меркурий', size: 0.5, distance: 5, speed: 0.04, color: 0x888888 },
+        { name: 'Венера', size: 1.0, distance: 7, speed: 0.03, color: 0xAAAA55 },
+        { name: 'Земля', size: 1.2, distance: 10, speed: 0.02, color: 0x0000FF },
+        { name: 'Марс', size: 0.8, distance: 12, speed: 0.018, color: 0xFF0000 },
+        { name: 'Юпитер', size: 1.8, distance: 16, speed: 0.01, color: 0xDD9933 },
+        { name: 'Сатурн', size: 1.6, distance: 20, speed: 0.008, color: 0xDDCC99 },
+        { name: 'Уран', size: 1.4, distance: 24, speed: 0.006, color: 0x77FFAA },
+        { name: 'Нептун', size: 1.3, distance: 28, speed: 0.005, color: 0x3377FF }
     ];
 
-    // Создание планет и спутников
+    // Создание планет
     planetData.forEach(planet => {
         const planetGeometry = new THREE.SphereGeometry(planet.size, 32, 32);
-        const planetMaterial = new THREE.MeshLambertMaterial({ map: createTextTexture(planet.name) });
-        const planetMesh = new THREE.Mesh(planetGeometry, planetMaterial);
-        scene.add(planetMesh);
-        planets.push({ mesh: planetMesh, distance: planet.distance, speed: planet.speed, angle: Math.random() * Math.PI * 2 });
-
-        // Добавление спутников
-        planet.moons.forEach(moon => {
-            const moonGeometry = new THREE.SphereGeometry(moon.size, 32, 32);
-            const moonMaterial = new THREE.MeshLambertMaterial({ map: createTextTexture(moon.name) });
-            const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
-            scene.add(moonMesh);
-            moons.push({ mesh: moonMesh, planet: planetMesh, distance: moon.distance, speed: moon.speed, angle: Math.random() * Math.PI * 2 });
-        });
+        const planetMaterial = new THREE.MeshBasicMaterial({ color: planet.color });
+        const mesh = new THREE.Mesh(planetGeometry, planetMaterial);
+        scene.add(mesh);
+        planets.push({ mesh, distance: planet.distance, speed: planet.speed, angle: Math.random() * Math.PI * 2 });
     });
 
     // Камера
@@ -303,28 +106,16 @@
     // Скорость
     let speedMultiplier = 1;
 
-    // Анимация планет и спутников
+    // Анимация планет
     function animate() {
         requestAnimationFrame(animate);
 
-        // Движение планет вокруг солнца
+        // Движение планет вокруг солнца с учетом скорости
         planets.forEach(planet => {
             planet.angle += planet.speed * speedMultiplier * 0.001;
             const x = Math.cos(planet.angle) * planet.distance;
             const y = Math.sin(planet.angle) * planet.distance;
             planet.mesh.position.set(x + sun.position.x, y + sun.position.y, sun.position.z);
-        });
-
-        // Движение спутников вокруг планет
-        moons.forEach(moon => {
-            moon.angle += moon.speed * speedMultiplier * 0.001;
-            const x = Math.cos(moon.angle) * moon.distance;
-            const y = Math.sin(moon.angle) * moon.distance;
-            moon.mesh.position.set(
-                moon.planet.position.x + x,
-                moon.planet.position.y + y,
-                moon.planet.position.z
-            );
         });
 
         // Рендер сцены
@@ -333,4 +124,29 @@
 
     animate();
 
-  
+    // Адаптация под размеры окна
+    window.addEventListener('resize', () => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    });
+
+    // Обработчики для кнопок
+    document.getElementById('slow').addEventListener('click', () => {
+        speedMultiplier = 0.1; // Медленно
+    });
+    document.getElementById('normal').addEventListener('click', () => {
+        speedMultiplier = 1;   // Нормально
+    });
+    document.getElementById('fast').addEventListener('click', () => {
+        speedMultiplier = 10;  // Быстро
+    });
+    document.getElementById('superfast').addEventListener('click', () => {
+        speedMultiplier = 100; // Очень быстро
+    });
+
+</script>
+</body>
+</html>

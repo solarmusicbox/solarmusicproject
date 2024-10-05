@@ -9,15 +9,12 @@
         canvas { flex-grow: 1; display: block; }
         .controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 60px; /* Чтобы кнопки соцсетей не перекрывались */
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 10px;
-        }
-        button {
-            padding: 10px;
-            font-size: 16px;
+            z-index: 10;
         }
         .social-buttons {
             position: absolute;
@@ -26,6 +23,11 @@
             transform: translateX(-50%);
             display: flex;
             justify-content: center;
+            z-index: 9;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
         }
         .social-buttons a {
             margin: 0 10px;
@@ -87,9 +89,14 @@
         return new THREE.CanvasTexture(canvas);
     }
 
+    // Добавляем освещение
+    const light = new THREE.PointLight(0xFFFFFF, 1, 100);
+    light.position.set(0, 0, 50);
+    scene.add(light);
+
     // Солнце
     const sunGeometry = new THREE.SphereGeometry(2.5, 32, 32);
-    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
+    const sunMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFF00 });
     const sun = new THREE.Mesh(sunGeometry, sunMaterial);
     scene.add(sun);
 
@@ -110,7 +117,7 @@
     // Создание планет и спутников
     planetData.forEach(planet => {
         const planetGeometry = new THREE.SphereGeometry(planet.size, 32, 32);
-        const planetMaterial = new THREE.MeshBasicMaterial({ map: createTextTexture(planet.name) });
+        const planetMaterial = new THREE.MeshLambertMaterial({ map: createTextTexture(planet.name) });
         const planetMesh = new THREE.Mesh(planetGeometry, planetMaterial);
         scene.add(planetMesh);
         planets.push({ mesh: planetMesh, distance: planet.distance, speed: planet.speed, angle: Math.random() * Math.PI * 2 });
@@ -118,7 +125,7 @@
         // Добавление спутников
         planet.moons.forEach(moon => {
             const moonGeometry = new THREE.SphereGeometry(moon.size, 32, 32);
-            const moonMaterial = new THREE.MeshBasicMaterial({ map: createTextTexture(moon.name) });
+            const moonMaterial = new THREE.MeshLambertMaterial({ map: createTextTexture(moon.name) });
             const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
             scene.add(moonMesh);
             moons.push({ mesh: moonMesh, planet: planetMesh, distance: moon.distance, speed: moon.speed, angle: Math.random() * Math.PI * 2 });
@@ -149,15 +156,6 @@
             const x = Math.cos(moon.angle) * moon.distance;
             const y = Math.sin(moon.angle) * moon.distance;
             moon.mesh.position.set(
-                moon.planet.position.x +Продолжаем анимацию для спутников и создаем триггер для звуков с помощью радиуса:
-
-```html
-...
-        moons.forEach(moon => {
-            moon.angle += moon.speed * speedMultiplier * 0.001;
-            const x = Math.cos(moon.angle) * moon.distance;
-            const y = Math.sin(moon.angle) * moon.distance;
-            moon.mesh.position.set(
                 moon.planet.position.x + x,
                 moon.planet.position.y + y,
                 moon.planet.position.z
@@ -170,28 +168,4 @@
 
     animate();
 
-    // Адаптация под размеры окна
-    window.addEventListener('resize', () => {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        renderer.setSize(width, height);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-    });
-
-    // Обработчики для кнопок
-    document.getElementById('slow').addEventListener('click', () => {
-        speedMultiplier = 0.1; // Медленно
-    });
-    document.getElementById('normal').addEventListener('click', () => {
-        speedMultiplier = 1;   // Нормально
-    });
-    document.getElementById('fast').addEventListener('click', () => {
-        speedMultiplier = 10;  // Быстро
-    });
-    document.getElementById('superfast').addEventListener('click', () => {
-        speedMultiplier = 100; // Очень быстро
-    });
-</script>
-</body>
-</html>
+  

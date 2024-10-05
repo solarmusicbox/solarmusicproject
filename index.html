@@ -42,6 +42,12 @@
 
     // Загрузить один звуковой файл
     const sound = new Audio('sound.mp3');
+    sound.addEventListener('canplaythrough', function() {
+        console.log('Audio can be played.');
+    }, false);
+    sound.addEventListener('error', function() {
+        console.error('Ошибка при загрузке аудио');
+    });
 
     // Солнце
     const sunGeometry = new THREE.SphereGeometry(2.5, 32, 32);
@@ -72,7 +78,7 @@
     });
 
     // Видимый радиус
-    const radiusGeometry = new THREE.RingGeometry(3, 3.1, 64);
+    const radiusGeometry = new THREE.RingGeometry(2.9, 3.2, 64);
     const radiusMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000, side: THREE.DoubleSide });
     const radius = new THREE.Mesh(radiusGeometry, radiusMaterial);
     radius.rotation.x = Math.PI / 2;

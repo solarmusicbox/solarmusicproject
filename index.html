@@ -3,52 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Солнечная музыкальная шкатулка с соцсетями</title>
+    <title>3D Солнечная музыкальная шкатулка с кнопками скорости</title>
     <style>
         body { margin: 0; overflow: hidden; display: flex; flex-direction: column; }
         canvas { flex-grow: 1; display: block; }
-        .social-buttons {
+        .controls {
             position: absolute;
-            bottom: 10px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            justify-content: center;
+            gap: 10px;
         }
-        .social-buttons a {
-            margin: 0 10px;
-            text-decoration: none;
-        }
-        .social-buttons img {
-            width: 40px;
-            height: 40px;
+        button {
+            padding: 10px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
     <script src="three.min.js"></script>
 
-<!-- Контролы для соцсетей -->
-<div class="social-buttons">
-    <a href="https://www.facebook.com/sharer/sharer.php?u=https://your-site.com" target="_blank">
-        <img src="https://image.flaticon.com/icons/png/512/733/733547.png" alt="Facebook">
-    </a>
-    <a href="https://twitter.com/intent/tweet?url=https://your-site.com&text=Check%20this%20out!" target="_blank">
-        <img src="https://image.flaticon.com/icons/png/512/733/733579.png" alt="Twitter">
-    </a>
-    <a href="https://vk.com/share.php?url=https://your-site.com" target="_blank">
-        <img src="https://image.flaticon.com/icons/png/512/145/145813.png" alt="VK">
-    </a>
-    <a href="https://t.me/share/url?url=https://your-site.com&text=Check%20this%20out!" target="_blank">
-        <img src="https://image.flaticon.com/icons/png/512/2111/2111646.png" alt="Telegram">
-    </a>
-</div>
-<a href="https://www.facebook.com/sharer/sharer.php?u=https://your-site.com" target="_blank">
-    <img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" alt="Facebook">
-</a>
-<a href="https://twitter.com/intent/tweet?url=https://your-site.com&text=Check%20this%20out!" target="_blank">
-    <img src="https://cdn-icons-png.flaticon.com/512/124/124021.png" alt="Twitter">
-</a>
+    <!-- Контролы для выбора скорости -->
+    <div class="controls">
+        <button id="slow">Медленно (x0.1)</button>
+        <button id="normal">Нормально (x1)</button>
+        <button id="fast">Быстро (x10)</button>
+        <button id="superfast">Очень быстро (x100)</button>
+    </div>
 
 <script>
     // Создание сцены, камеры и рендерера
@@ -89,13 +71,16 @@
     // Камера
     camera.position.z = 30;
 
+    // Скорость
+    let speedMultiplier = 1;
+
     // Анимация планет
     function animate() {
         requestAnimationFrame(animate);
 
-        // Движение планет вокруг солнца
+        // Движение планет вокруг солнца с учетом скорости
         planets.forEach(planet => {
-            planet.angle += planet.speed * 0.001;
+            planet.angle += planet.speed * speedMultiplier * 0.001;
             const x = Math.cos(planet.angle) * planet.distance;
             const y = Math.sin(planet.angle) * planet.distance;
             planet.mesh.position.set(x + sun.position.x, y + sun.position.y, sun.position.z);
@@ -114,6 +99,20 @@
         renderer.setSize(width, height);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
+    });
+
+    // Обработчики для кнопок
+    document.getElementById('slow').addEventListener('click', () => {
+        speedMultiplier = 0.1; // Медленно
+    });
+    document.getElementById('normal').addEventListener('click', () => {
+        speedMultiplier = 1;   // Нормально
+    });
+    document.getElementById('fast').addEventListener('click', () => {
+        speedMultiplier = 10;  // Быстро
+    });
+    document.getElementById('superfast').addEventListener('click', () => {
+        speedMultiplier = 100; // Очень быстро
     });
 
 </script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Солнечная музыкальная шкатулка с кнопками скорости</title>
+    <title>3D Солнечная музыкальная шкатулка с кнопками скорости и музыкой</title>
     <style>
         body { margin: 0; overflow: hidden; display: flex; flex-direction: column; }
         canvas { flex-grow: 1; display: block; }
@@ -40,6 +40,9 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
+    // Загрузить один звуковой файл
+    const sound = new Audio('sound.mp3');
+
     // Солнце
     const sunGeometry = new THREE.SphereGeometry(2.5, 32, 32);
     const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
@@ -68,6 +71,13 @@
         planets.push({ mesh, distance: planet.distance, speed: planet.speed, angle: Math.random() * Math.PI * 2 });
     });
 
+    // Видимый радиус
+    const radiusGeometry = new THREE.RingGeometry(3, 3.1, 64);
+    const radiusMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000, side: THREE.DoubleSide });
+    const radius = new THREE.Mesh(radiusGeometry, radiusMaterial);
+    radius.rotation.x = Math.PI / 2;
+    scene.add(radius);
+
     // Камера
     camera.position.z = 30;
 
@@ -84,6 +94,14 @@
             const x = Math.cos(planet.angle) * planet.distance;
             const y = Math.sin(planet.angle) * planet.distance;
             planet.mesh.position.set(x + sun.position.x, y + sun.position.y, sun.position.z);
+
+            // Проверка пересечения радиуса
+            if (Math.abs(x) < 3 && Math.abs(y) < 3) {
+                if (sound.paused) {
+                    sound.currentTime = 0;
+                    sound.play(); // Проигрываем звук, если планета пересекает радиус
+                }
+            }
         });
 
         // Рендер сцены

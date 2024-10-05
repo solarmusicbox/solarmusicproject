@@ -74,15 +74,8 @@
         const planetMaterial = new THREE.MeshBasicMaterial({ color: planet.color });
         const mesh = new THREE.Mesh(planetGeometry, planetMaterial);
         scene.add(mesh);
-        planets.push({ mesh, distance: planet.distance, speed: planet.speed, angle: Math.random() * Math.PI * 2 });
+        planets.push({ mesh, distance: planet.distance, speed: planet.speed, angle: Math.random() * Math.PI * 2, hasPlayed: false });
     });
-
-    // Видимый радиус
-    const radiusGeometry = new THREE.RingGeometry(2.9, 3.2, 64);
-    const radiusMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000, side: THREE.DoubleSide });
-    const radius = new THREE.Mesh(radiusGeometry, radiusMaterial);
-    radius.rotation.x = Math.PI / 2;
-    scene.add(radius);
 
     // Камера
     camera.position.z = 30;
@@ -101,12 +94,16 @@
             const y = Math.sin(planet.angle) * planet.distance;
             planet.mesh.position.set(x + sun.position.x, y + sun.position.y, sun.position.z);
 
-            // Проверка пересечения радиуса
-            if (Math.abs(x) < 3 && Math.abs(y) < 3) {
-                if (sound.paused) {
-                    sound.currentTime = 0;
-                    sound.play(); // Проигрываем звук, если планета пересекает радиус
-                }
+            // Проверка, что планета проходит фиксированную точку на орбите (например, X = distance, Y = 0)
+            if (Math.abs(x - planet.distance) < 0.1 && Math.abs(y) < 0.1 && !planet.hasPlayed) {
+                sound.currentTime = 0;
+                sound.play();
+                planet.hasPlayed = true; // Звук проигран для этого оборота
+            }
+
+            // Сброс триггера звука, если планета уходит с другой стороны
+            if (Math.abs(x - planet.distance) > 1) {
+                planet.hasPlayed = false; // Можно проигрывать звук снова
             }
         });
 

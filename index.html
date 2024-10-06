@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Солнечная система с астрономическими расстояниями и звуками</title>
-    <style>
+      <style>
         body { margin: 0; overflow: hidden; display: flex; flex-direction: column; }
         canvas { flex-grow: 1; display: block; }
         .controls {
@@ -19,9 +19,14 @@
         .slider-container {
             display: flex;
             align-items: center;
+            width: 300px; /* Увеличиваем длину шкалы в 3 раза */
+        }
+        .slider-container label, .slider-container span {
+            color: white; /* Текст белого цвета */
         }
         .slider-container input {
             margin-left: 10px;
+            width: 100%; /* Полная ширина */
         }
     </style>
 </head>

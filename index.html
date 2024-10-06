@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Солнечная система с астрономическими расстояниями и звуками</title>
-      <style>
+    <title>3D Солнечная система с тональностью звуков</title>
+    <style>
         body { margin: 0; overflow: hidden; display: flex; flex-direction: column; }
         canvas { flex-grow: 1; display: block; }
         .controls {
@@ -19,10 +19,10 @@
         .slider-container {
             display: flex;
             align-items: center;
-            width: 300px; /* Увеличиваем длину шкалы в 3 раза */
+            width: 300px; /* Делаем шкалу длиннее */
         }
         .slider-container label, .slider-container span {
-            color: white; /* Текст белого цвета */
+            color: white; /* Белый текст */
         }
         .slider-container input {
             margin-left: 10px;
@@ -51,20 +51,28 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Звук загружается, но воспроизводится по клику
-    const sound = new Audio('https://solarmusicbox.github.io/solarmusicproject/sound.mp3');
-    sound.addEventListener('canplaythrough', function() {
-        console.log('Audio can be played.');
-    }, false);
-    sound.addEventListener('error', function() {
-        console.error('Ошибка при загрузке аудио');
-    });
+    // Создание аудио контекста
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-    // Солнце
-    const sunGeometry = new THREE.SphereGeometry(2, 32, 32);
-    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
-    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-    scene.add(sun);
+    // Функция для создания звука с изменением тональности
+    function playSoundForObject(distance, duration = 1) {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        // Расчет частоты в зависимости от расстояния
+        const maxDistance = 300; // Максимальное расстояние (Нептун)
+        const baseFrequency = 200; // Базовая частота для ближайших объектов
+        const frequency = baseFrequency * (distance / maxDistance);
+
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.type = 'sine';
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + duration);
+    }
     // Данные о планетах и их спутниках
     const planets = [];
     const moons = [];
@@ -120,8 +128,7 @@
             planet.mesh.position.set(x + sun.position.x, y + sun.position.y, sun.position.z);
 
             if (Math.abs(x - planet.distance) < 0.1 && Math.abs(y) < 0.1 && !planet.hasPlayed) {
-                sound.currentTime = 0;
-                sound.play();
+                playSoundForObject(planet.distance);
                 planet.hasPlayed = true;
             }
 
@@ -130,23 +137,21 @@
             }
         });
 
-       moons.forEach(moon => {
-    moon.angle += moon.speed * speedMultiplier * 0.001;
-    const x = Math.cos(moon.angle) * moon.distance;
-    const y = Math.sin(moon.angle) * moon.distance;
-    moon.mesh.position.set(moon.planet.position.x + x, moon.planet.position.y + y, moon.planet.position.z);
+        moons.forEach(moon => {
+            moon.angle += moon.speed * speedMultiplier * 0.001;
+            const x = Math.cos(moon.angle) * moon.distance;
+            const y = Math.sin(moon.angle) * moon.distance;
+            moon.mesh.position.set(moon.planet.position.x + x, moon.planet.position.y + y, moon.planet.position.z);
 
-    if (Math.abs(x - moon.distance) < 0.1 && Math.abs(y) < 0.1 && !moon.hasPlayed) {
-        sound.currentTime = 0;
-        sound.play();
-        moon.hasPlayed = true;
-    }
+            if (Math.abs(x - moon.distance) < 0.1 && Math.abs(y) < 0.1 && !moon.hasPlayed) {
+                playSoundForObject(moon.distance + moon.planet.distance);
+                moon.hasPlayed = true;
+            }
 
-    if (Math.abs(x - moon.distance) > 1) {
-        moon.hasPlayed = false;
-    }
-});
-
+            if (Math.abs(x - moon.distance) > 1) {
+                moon.hasPlayed = false;
+            }
+        });
 
         renderer.render(scene, camera);
     }

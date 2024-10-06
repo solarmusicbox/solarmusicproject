@@ -51,25 +51,24 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Создание аудио контекста
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    // Солнце
+    const sunGeometry = new THREE.SphereGeometry(2, 32, 32);
+    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
+    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    scene.add(sun);
 
-    // Функция для создания звука с изменением тональности
+    // Аудио контекст для звуков
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     function playSoundForObject(distance, duration = 1) {
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-
-        // Расчет частоты в зависимости от расстояния
         const maxDistance = 300; // Максимальное расстояние (Нептун)
         const baseFrequency = 200; // Базовая частота для ближайших объектов
         const frequency = baseFrequency * (distance / maxDistance);
-
         oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
         oscillator.type = 'sine';
-
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
-
         oscillator.start();
         oscillator.stop(audioContext.currentTime + duration);
     }

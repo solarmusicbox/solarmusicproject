@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Солнечная музыкальная шкатулка с кнопками скорости и музыкой</title>
+    <title>3D Солнечная музыкальная шкатулка с ползунком скорости</title>
     <style>
         body { margin: 0; overflow: hidden; display: flex; flex-direction: column; }
         canvas { flex-grow: 1; display: block; }
@@ -13,11 +13,15 @@
             left: 50%;
             transform: translateX(-50%);
             display: flex;
+            flex-direction: column;
             gap: 10px;
         }
-        button {
-            padding: 10px;
-            font-size: 16px;
+        .slider-container {
+            display: flex;
+            align-items: center;
+        }
+        .slider-container input {
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -26,10 +30,11 @@
 
     <!-- Контролы для выбора скорости -->
     <div class="controls">
-        <button id="slow">Медленно (x0.1)</button>
-        <button id="normal">Нормально (x1)</button>
-        <button id="fast">Быстро (x10)</button>
-        <button id="superfast">Очень быстро (x100)</button>
+        <div class="slider-container">
+            <label for="speed-slider">Скорость: </label>
+            <input type="range" id="speed-slider" min="1" max="1000" value="1">
+            <span id="speed-value">1</span>
+        </div>
         <button id="start-sound">Начать звук</button>
     </div>
 
@@ -123,18 +128,13 @@
         camera.updateProjectionMatrix();
     });
 
-    // Обработчики для кнопок
-    document.getElementById('slow').addEventListener('click', () => {
-        speedMultiplier = 0.1; // Медленно
-    });
-    document.getElementById('normal').addEventListener('click', () => {
-        speedMultiplier = 1;   // Нормально
-    });
-    document.getElementById('fast').addEventListener('click', () => {
-        speedMultiplier = 10;  // Быстро
-    });
-    document.getElementById('superfast').addEventListener('click', () => {
-        speedMultiplier = 100; // Очень быстро
+    // Обработчик ползунка для изменения скорости
+    const speedSlider = document.getElementById('speed-slider');
+    const speedValue = document.getElementById('speed-value');
+
+    speedSlider.addEventListener('input', (event) => {
+        speedMultiplier = event.target.value;
+        speedValue.textContent = speedMultiplier;
     });
 
     // Кнопка для запуска звука

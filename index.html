@@ -30,6 +30,7 @@
         <button id="normal">Нормально (x1)</button>
         <button id="fast">Быстро (x10)</button>
         <button id="superfast">Очень быстро (x100)</button>
+        <button id="start-sound">Начать звук</button>
     </div>
 
 <script>
@@ -40,8 +41,8 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Загрузить один звуковой файл
-    const sound = new Audio('sound.mp3');
+    // Звук загружается, но воспроизводится по клику
+    const sound = new Audio('https://solarmusicbox.github.io/solarmusicproject/sound.mp3');
     sound.addEventListener('canplaythrough', function() {
         console.log('Audio can be played.');
     }, false);
@@ -134,6 +135,11 @@
     });
     document.getElementById('superfast').addEventListener('click', () => {
         speedMultiplier = 100; // Очень быстро
+    });
+
+    // Кнопка для запуска звука
+    document.getElementById('start-sound').addEventListener('click', () => {
+        sound.play();
     });
 
 </script>

@@ -125,22 +125,23 @@
             }
         });
 
-        moons.forEach(moon => {
-            moon.angle += moon.speed * speedMultiplier * 0.001;
-            const x = Math.cos(moon.angle) * moon.distance;
-            const y = Math.sin(moon.angle) * moon.distance;
-            moon.mesh.position.set(moon.planet.position.x + x, moon.planet.position.y + y, moon.planet.position.z);
+       moons.forEach(moon => {
+    moon.angle += moon.speed * speedMultiplier * 0.001;
+    const x = Math.cos(moon.angle) * moon.distance;
+    const y = Math.sin(moon.angle) * moon.distance;
+    moon.mesh.position.set(moon.planet.position.x + x, moon.planet.position.y + y, moon.planet.position.z);
 
-            if (Math.abs(x - moon.distance) < 0.1 && Math.abs(y) < 0.1 && !moon.hasPlayed) {
-                sound.currentTime = 0;
-                sound.play();
-                moon.hasPlayed = true;
-            }
+    if (Math.abs(x - moon.distance) < 0.1 && Math.abs(y) < 0.1 && !moon.hasPlayed) {
+        sound.currentTime = 0;
+        sound.play();
+        moon.hasPlayed = true;
+    }
 
-            if (Math.abs(x - moon.distance) > 1) {
-                moon.hasPlayed = false;
-            }
-        });
+    if (Math.abs(x - moon.distance) > 1) {
+        moon.hasPlayed = false;
+    }
+});
+
 
         renderer.render(scene, camera);
     }
